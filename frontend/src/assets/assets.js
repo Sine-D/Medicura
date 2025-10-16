@@ -4,6 +4,11 @@ import group_profiles from './group_profiles.png'
 import profile_pic from './profile_pic.png'
 import contact_image from './contact_image.png'
 import about_image from './about_image.png'
+import story_image from './story_image.jpg'
+import leadership1 from './leadership1.jpg'
+import leadership2 from './leadership2.jpg'
+import leadership3 from './leadership3.jpg'
+import leadership4 from './leadership4.jpg'
 import logo from './logo.svg'
 import dropdown_icon from './dropdown_icon.svg'
 import menu_icon from './menu_icon.svg'
@@ -50,6 +55,11 @@ export const assets = {
     arrow_icon,
     contact_image,
     about_image,
+    story_image,
+    leadership1,
+    leadership2,
+    leadership3,
+    leadership4,
     menu_icon,
     cross_icon,
     dropdown_icon,

@@ -5,7 +5,7 @@ import { AppContext } from '../context/AppContext'
 const TopDoctors = () => {
 
     const navigate = useNavigate()
-    const {doctors} = useContext(AppContext)
+    const {doctors, backendUrl} = useContext(AppContext)
 
 
   return (
@@ -14,8 +14,8 @@ const TopDoctors = () => {
         <p className='sm:w-1/3 text-center text-sm'>Simply browse through our Top Rated Doctors and choose one that suits your needs.</p>
         <div className='w-full grid grid-cols-auto gap-4 pt-5 gap-y-6 px-3 sm:px-0'>
             {doctors.slice(0,10).map((item,index)=>(
-                <div onClick={() => navigate(`/appointments/${item._id}`)}  className='border border-blue-200 rounded-xl overflow-hidden cursor-pointer hover:translate-y-[-10px] transition-all duration-500' key={item._id || index}>
-                    <img className='bg-blue-50' src={item.image} alt={item.name} />
+                <div onClick={() => {navigate(`/appointments/${item._id}`); scrollTo(0,0)}}  className='border border-blue-200 rounded-xl overflow-hidden cursor-pointer hover:translate-y-[-10px] transition-all duration-500' key={item._id || index}>
+                    <img className='bg-blue-50' src={(item.image || '').toString().trim().startsWith('http') ? item.image : ( (item.image || '').toString().trim().startsWith('/uploads') || (item.image || '').toString().trim().startsWith('uploads') ? `${backendUrl}${(item.image || '').toString().trim().startsWith('/') ? '' : '/'}${(item.image || '').toString().trim()}` : item.image)} alt={item.name} />
                 <div className='p-4'>
                 <div className='flex items-center gap-2 text-sm text-center text-green-500'>
                     <p className='w-2 h-2 bg-green-500 rounded-full'></p><p>Available</p>
@@ -26,7 +26,7 @@ const TopDoctors = () => {
             </div>
             ))}
             </div>
-            <button onClick={()=>{navigate('/doctors'); scrollTo(0,0)}} className='bg-blue-50 text-gray-600 px-12 py-3 rounded-full mt-10'>More..</button> 
+            <button onClick={()=>{navigate('/Doctors'); scrollTo(0,0)}} className='bg-blue-50 text-gray-600 px-12 py-3 rounded-full mt-10'>More..</button> 
      </div>
    )
 }
