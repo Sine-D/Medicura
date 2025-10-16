@@ -1,0 +1,30 @@
+{
+  "name": "medicura-backend",
+  "version": "1.0.0",
+  "description": "Backend API for Medicura appointment management system",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.6.1",
+    "express": "^4.21.2",
+    "mongoose": "^8.19.1",
+    "nodemailer": "^6.10.1"
+  },
+  "devDependencies": {
+    "kill-port": "^2.0.1",
+    "nodemon": "^3.1.10"
+  },
+  "keywords": [
+    "medical",
+    "appointments",
+    "api",
+    "mongodb"
+  ],
+  "author": "Medicura Team",
+  "license": "MIT"
+}

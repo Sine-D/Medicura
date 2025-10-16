@@ -1,0 +1,137 @@
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+
+const ContactSuccessPage = () => {
+  const navigate = useNavigate();
+  const [showConfetti, setShowConfetti] = useState(true);
+
+  useEffect(() => {
+    setTimeout(() => setShowConfetti(false), 3000);
+  }, []);
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 relative overflow-hidden">
+      {/* Animated Background */}
+      <div className="absolute inset-0 overflow-hidden">
+        {showConfetti && [...Array(50)].map((_, i) => (
+          <div
+            key={i}
+            className="absolute animate-confetti"
+            style={{
+              left: Math.random() * 100 + '%',
+              top: -20 + 'px',
+              width: Math.random() * 10 + 5 + 'px',
+              height: Math.random() * 10 + 5 + 'px',
+              backgroundColor: ['#3b82f6', '#6366f1', '#8b5cf6', '#06b6d4'][Math.floor(Math.random() * 4)],
+              animationDelay: Math.random() * 3 + 's',
+              animationDuration: Math.random() * 3 + 2 + 's'
+            }}
+          />
+        ))}
+      </div>
+
+      {/* Main Content */}
+      <div className="relative z-10 max-w-2xl w-full mx-4">
+        <div className="bg-white/90 backdrop-blur-2xl rounded-3xl p-12 shadow-2xl border border-white/50 transform hover:scale-105 transition-all duration-500">
+          {/* Success Icon */}
+          <div className="relative mx-auto mb-8">
+            <div className="w-32 h-32 mx-auto bg-gradient-to-br from-blue-400 to-indigo-600 rounded-full flex items-center justify-center shadow-2xl shadow-blue-500/50 animate-bounce-slow">
+              <svg className="w-20 h-20 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7"/>
+              </svg>
+            </div>
+            {/* Pulse rings */}
+            <div className="absolute inset-0 rounded-full border-4 border-blue-400 animate-ping opacity-20" />
+            <div className="absolute inset-0 rounded-full border-4 border-blue-400 animate-pulse opacity-30" />
+          </div>
+
+          {/* Title */}
+          <h1 className="text-5xl font-black text-center mb-4 text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 animate-fade-in">
+            Message Sent Successfully!
+          </h1>
+
+          {/* Subtitle */}
+          <p className="text-xl text-center text-gray-700 mb-8 font-medium">
+            Thank you for contacting Medicura
+          </p>
+
+          {/* Message Details */}
+          <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-6 mb-8 border border-blue-200">
+            <div className="text-center p-4 bg-white/70 rounded-xl mb-4">
+              <svg className="w-16 h-16 mx-auto text-blue-600 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+              </svg>
+              <p className="text-lg text-gray-700 font-semibold">
+                We've received your message and will get back to you within 1-2 business days.
+              </p>
+            </div>
+            <div className="p-4 bg-white/70 rounded-xl text-center">
+              <p className="text-sm text-gray-600 mb-1">Submitted On</p>
+              <p className="text-lg font-bold text-gray-800">
+                {new Date().toLocaleDateString('en-US', { 
+                  year: 'numeric', 
+                  month: 'long', 
+                  day: 'numeric',
+                  hour: '2-digit',
+                  minute: '2-digit'
+                })}
+              </p>
+            </div>
+          </div>
+
+          {/* Action Buttons */}
+          <div className="space-y-4">
+            <button
+              onClick={() => navigate("/")}
+              className="w-full py-4 px-6 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-2xl font-bold text-lg shadow-2xl shadow-blue-500/50 hover:shadow-blue-600/60 transform hover:scale-105 hover:-translate-y-1 transition-all duration-300"
+            >
+              Back to Home
+            </button>
+            <button
+              onClick={() => navigate("/contact")}
+              className="w-full py-4 px-6 bg-gradient-to-r from-gray-400 to-gray-600 text-white rounded-2xl font-bold text-lg shadow-2xl shadow-gray-500/50 hover:shadow-gray-600/60 transform hover:scale-105 hover:-translate-y-1 transition-all duration-300"
+            >
+              Send Another Message
+            </button>
+          </div>
+
+          {/* Footer Note */}
+          <div className="mt-8 text-center">
+            <p className="text-sm text-gray-500 flex items-center justify-center">
+              <svg className="w-5 h-5 mr-2 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/>
+              </svg>
+              A confirmation email has been sent to your inbox
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <style>{`
+        @keyframes confetti {
+          0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+          100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
+        .animate-confetti {
+          animation: confetti linear forwards;
+        }
+        @keyframes bounce-slow {
+          0%, 100% { transform: translateY(0) scale(1); }
+          50% { transform: translateY(-20px) scale(1.05); }
+        }
+        .animate-bounce-slow {
+          animation: bounce-slow 2s ease-in-out infinite;
+        }
+        @keyframes fade-in {
+          from { opacity: 0; transform: translateY(-20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+          animation: fade-in 0.8s ease-out;
+        }
+      `}</style>
+    </div>
+  );
+};
+
+export default ContactSuccessPage;
