@@ -1,18 +1,18 @@
 import React, { Suspense, lazy, useEffect } from 'react'
-import{ Route, Routes, useLocation } from 'react-router-dom'
+import { Route, Routes, useLocation } from 'react-router-dom'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import Home from './pages/Home'
 import Doctors from './pages/Doctors'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
-import Login          from "./pages/Login";
-import About          from "./pages/About";
-import Contact        from "./pages/Contact";
-import MyProfile      from "./pages/MyProfile";
+import Login from "./pages/Login";
+import About from "./pages/About";
+import Contact from "./pages/Contact";
+import MyProfile from "./pages/MyProfile";
 import MyAppointments from "./pages/MyAppointments";
-import Appointments   from "./pages/Appointments";
-import Laboratory     from "./pages/Laboratory";
+import Appointments from "./pages/Appointments";
+import Laboratory from "./pages/Laboratory";
 import SuccessPage from './pages/SuccessPage'
 import CancelPage from './pages/CancelPage'
 
@@ -56,54 +56,55 @@ const App = () => {
         pauseOnFocusLoss
         draggable
         pauseOnHover
-        theme="light"
+        theme="dark"
       />
-      <div className='mx-4 sm:mx-[10%]'>
+      <div className='min-h-screen bg-transparent'>
         <Navbar />
-        <Routes>
-          <Route path='/' element={<Home />} />
-          <Route path='/Doctors' element={<Doctors />} />
-          <Route path='/Doctors/:speciality' element={<Doctors />} />
-          <Route path='/Login' element={<Login />} />
-          <Route path='/About' element={<About />} />
-          <Route path='/Contact' element={<Contact />} />
-          <Route path='/MyProfile' element={<MyProfile />} />
-          <Route path='/MyAppointments' element={<MyAppointments />} />
-          <Route path='/appointments/:docId' element={<Appointments />} />
-          <Route path='/Laborotory' element={<Laboratory />} />
-          <Route path='/ai-lab-assistant' element={<AILabAssistant />} />
-          <Route path='/success' element={<SuccessPage />} />
-          <Route path='/cancel' element={<CancelPage />} />
-          <Route path='/E-Pharmacy' element={
-            <Suspense fallback={<div>Loading...</div>}>
-              <Epharmacy />
-            </Suspense>
-          } />
-          <Route path='/my-cart' element={
-            <Suspense fallback={<div>Loading...</div>}>
-              <MyCart />
-            </Suspense>
-          } />
+        <main className='mx-4 sm:mx-[10%] py-8'>
+          <Routes>
+            <Route path='/' element={<Home />} />
+            <Route path='/Doctors' element={<Doctors />} />
+            <Route path='/Doctors/:speciality' element={<Doctors />} />
+            <Route path='/Login' element={<Login />} />
+            <Route path='/About' element={<About />} />
+            <Route path='/Contact' element={<Contact />} />
+            <Route path='/MyProfile' element={<MyProfile />} />
+            <Route path='/MyAppointments' element={<MyAppointments />} />
+            <Route path='/appointments/:docId' element={<Appointments />} />
+            <Route path='/Laborotory' element={<Laboratory />} />
+            <Route path='/ai-lab-assistant' element={<AILabAssistant />} />
+            <Route path='/success' element={<SuccessPage />} />
+            <Route path='/cancel' element={<CancelPage />} />
+            <Route path='/E-Pharmacy' element={
+              <Suspense fallback={<div className="text-neon-cyan animate-pulse">Loading...</div>}>
+                <Epharmacy />
+              </Suspense>
+            } />
+            <Route path='/my-cart' element={
+              <Suspense fallback={<div className="text-neon-cyan animate-pulse">Loading...</div>}>
+                <MyCart />
+              </Suspense>
+            } />
 
 
-	      <Route element={<EPharmacy />} path="/E-Pharmacy" />
-        
-        <Route
-          element={<InventoryReuqestManagement />}
-          path="/request-management"
-        />
-        <Route
-          element={<InvoicesSentBySupplier />}
-          path="/inventory-item-management"
-        />
-        <Route element={<CreateRequestInventory />} path="/create-request" />
-        <Route element={<InventoryManament />} path="/inventory-management" />
-        <Route element={<SupplierDashboard />} path="/supplier-dashboard" />
-        <Route element={<InventoryDashboard />} path="/inventory-dashboard" />
+            <Route element={<EPharmacy />} path="/E-Pharmacy" />
+
+            <Route
+              element={<InventoryReuqestManagement />}
+              path="/request-management"
+            />
+            <Route
+              element={<InvoicesSentBySupplier />}
+              path="/inventory-item-management"
+            />
+            <Route element={<CreateRequestInventory />} path="/create-request" />
+            <Route element={<InventoryManament />} path="/inventory-management" />
+            <Route element={<SupplierDashboard />} path="/supplier-dashboard" />
+            <Route element={<InventoryDashboard />} path="/inventory-dashboard" />
 
 
-        </Routes>
-        <div className='border-t border-gray-400 my-6'></div>
+          </Routes>
+        </main>
         <Footer />
       </div>
     </>

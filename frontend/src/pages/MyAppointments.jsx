@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useMemo, useState} from 'react'
+import React, { useContext, useEffect, useMemo, useState } from 'react'
 import { AppContext } from '../context/AppContext'
 import axios from 'axios'
 import { toast } from 'react-toastify'
@@ -14,30 +14,30 @@ const MyAppointments = () => {
   const [payModalAppt, setPayModalAppt] = useState(null)
 
   const fetchAppointments = async () => {
-    try{
+    try {
       setIsLoading(true)
       const headers = token ? { Authorization: `Bearer ${token}` } : {}
       const { data } = await axios.get(backendUrl + '/api/user/appointments', { headers })
-      if(data.success) setAppointments(data.appointments)
+      if (data.success) setAppointments(data.appointments)
       else toast.error(data.message)
-    }catch(err){ toast.error(err.message) }
-    finally{ setIsLoading(false) }
+    } catch (err) { toast.error(err.message) }
+    finally { setIsLoading(false) }
   }
 
   const cancelAppointment = async (id) => {
-    try{
+    try {
       setIsCancelling(true)
       const headers = token ? { Authorization: `Bearer ${token}` } : {}
       const { data } = await axios.delete(backendUrl + `/api/user/appointments/${id}`, { headers })
-      if(data.success){ toast.success('Appointment cancelled'); setConfirmAppt(null); fetchAppointments() }
+      if (data.success) { toast.success('Appointment cancelled'); setConfirmAppt(null); fetchAppointments() }
       else toast.error(data.message)
-    }catch(err){ toast.error(err.message) }
-    finally{ setIsCancelling(false) }
+    } catch (err) { toast.error(err.message) }
+    finally { setIsCancelling(false) }
   }
 
-  useEffect(()=>{ fetchAppointments() },[])
+  useEffect(() => { fetchAppointments() }, [])
 
-  const statusStyleByValue = useMemo(()=>({
+  const statusStyleByValue = useMemo(() => ({
     scheduled: 'bg-emerald-50 text-emerald-700 border-emerald-200',
     confirmed: 'bg-emerald-50 text-emerald-700 border-emerald-200',
     pending: 'bg-amber-50 text-amber-700 border-amber-200',
@@ -46,7 +46,7 @@ const MyAppointments = () => {
   }), [])
 
   const handlePayOnline = async (ap) => {
-    try{
+    try {
       setPayingId(ap._id)
       const orderData = {
         order_id: `APPT-${ap._id}-${Date.now()}`,
@@ -68,7 +68,7 @@ const MyAppointments = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(orderData)
       })
-      if(!res.ok){
+      if (!res.ok) {
         const txt = await res.text()
         console.error('Payment server error', txt)
         toast.error('Payment server error')
@@ -89,17 +89,17 @@ const MyAppointments = () => {
       })
       document.body.appendChild(form)
       form.submit()
-    }catch(err){
+    } catch (err) {
       console.error(err)
       toast.error(err.message)
-    }finally{
+    } finally {
       setPayingId('')
     }
   }
 
   // ===== Exports =====
   const toCsv = (rows) => {
-    const header = ['Date','Time','Doctor','Speciality','Status','Reference','Amount']
+    const header = ['Date', 'Time', 'Doctor', 'Speciality', 'Status', 'Reference', 'Amount']
     const csvRows = [header.join(',')]
     rows.forEach(ap => {
       const docMeta = doctors?.find?.(d => d._id === ap.doctorId)
@@ -111,19 +111,19 @@ const MyAppointments = () => {
       const status = ap.status
       const ref = ap._id?.slice?.(-6) || ''
       const amount = typeof ap.fees === 'number' ? ap.fees : ''
-      csvRows.push([dateStr,time,doctor,spec,status,ref,amount].map(x => `"${(x ?? '').toString().replace(/"/g,'""')}"`).join(','))
+      csvRows.push([dateStr, time, doctor, spec, status, ref, amount].map(x => `"${(x ?? '').toString().replace(/"/g, '""')}"`).join(','))
     })
     return csvRows.join('\n')
   }
 
   const downloadCsvAll = () => {
-    if(appointments.length === 0){ toast.info('No appointments to export'); return }
+    if (appointments.length === 0) { toast.info('No appointments to export'); return }
     const csv = toCsv(appointments)
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
-    a.download = `appointments_${new Date().toISOString().slice(0,10)}.csv`
+    a.download = `appointments_${new Date().toISOString().slice(0, 10)}.csv`
     a.click()
     URL.revokeObjectURL(url)
   }
@@ -143,8 +143,8 @@ const MyAppointments = () => {
   })
 
   const downloadPdfAll = async () => {
-    try{
-      if(appointments.length === 0){ toast.info('No appointments to export'); return }
+    try {
+      if (appointments.length === 0) { toast.info('No appointments to export'); return }
       const jsPDF = await ensureJsPDF()
       const doc = new jsPDF({ unit: 'pt', format: 'a4' })
       const margin = 40
@@ -160,7 +160,7 @@ const MyAppointments = () => {
 
       doc.setFont('helvetica', 'normal')
       doc.setFontSize(10)
-      const header = ['Date','Time','Doctor','Speciality','Status','Ref','Amount']
+      const header = ['Date', 'Time', 'Doctor', 'Speciality', 'Status', 'Ref', 'Amount']
       const colWidths = [70, 50, 140, 100, 70, 50, 60]
 
       // Draw header
@@ -209,8 +209,8 @@ const MyAppointments = () => {
         })
       })
 
-      doc.save(`appointments_${new Date().toISOString().slice(0,10)}.pdf`)
-    }catch(err){
+      doc.save(`appointments_${new Date().toISOString().slice(0, 10)}.pdf`)
+    } catch (err) {
       console.error(err)
       toast.error('Failed to generate PDF. Please try again.')
     }
@@ -239,95 +239,120 @@ const MyAppointments = () => {
       <div class="footer">Thank you for choosing MediCura.</div>
     `
     const win = window.open('', '_blank')
-    if(!win) { toast.error('Pop-up blocked. Please allow pop-ups.'); return }
+    if (!win) { toast.error('Pop-up blocked. Please allow pop-ups.'); return }
     win.document.open()
     win.document.write(`<!doctype html><html><head><title>Receipt</title></head><body>${html}</body></html>`)
     win.document.close(); win.focus(); win.print()
   }
 
   return (
-    <div>
-      <div className='mt-12'>
-        <h2 className='text-xl sm:text-2xl font-semibold text-zinc-800'>My appointments</h2>
-        <p className='text-sm text-zinc-500 mt-1'>Manage and review your upcoming and past bookings</p>
+    <div className='py-12 px-4 max-w-7xl mx-auto'>
+      <div className='flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12'>
+        <div>
+          <h2 className='text-3xl md:text-4xl font-black text-white uppercase tracking-tighter'>
+            Neural <span className='neon-text'>Log</span>
+          </h2>
+          <p className='text-gray-500 text-sm font-bold uppercase tracking-widest mt-2'>Scheduled Medical Synchronizations</p>
+        </div>
+
         {!isLoading && appointments.length > 0 && (
-          <div className='mt-3 flex gap-2'>
-            <button onClick={downloadPdfAll} className='px-3 py-1.5 rounded-full border bg-green-300 border-gray-600 text-sm hover:bg-zinc-50'>Download PDF</button>
-            <button onClick={downloadCsvAll} className='px-3 py-1.5 rounded-full border bg-green-300 border-gray-600 text-sm hover:bg-zinc-50'>Download CSV</button>
+          <div className='flex gap-4'>
+            <button onClick={downloadPdfAll} className='glass-card px-5 py-2.5 text-[10px] font-black uppercase tracking-widest text-neon-cyan border-neon-cyan/20 hover:bg-neon-cyan/10 transition-all flex items-center gap-2'>
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10" /></svg>
+              Export PDF
+            </button>
+            <button onClick={downloadCsvAll} className='glass-card px-5 py-2.5 text-[10px] font-black uppercase tracking-widest text-neon-purple border-neon-purple/20 hover:bg-neon-purple/10 transition-all flex items-center gap-2'>
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+              Export CSV
+            </button>
           </div>
         )}
       </div>
 
-      {/* Loading and content unchanged below */}
-      {isLoading && (
-        <div className='mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3'>
+      {isLoading ? (
+        <div className='grid gap-6 sm:grid-cols-2 lg:grid-cols-3'>
           {[...Array(6)].map((_, i) => (
-            <div key={i} className='rounded-2xl border border-zinc-200 p-4 animate-pulse bg-white'>
-              <div className='h-6 w-32 bg-zinc-200 rounded mb-3'></div>
-              <div className='h-4 w-24 bg-zinc-200 rounded mb-2'></div>
-              <div className='h-4 w-20 bg-zinc-200 rounded mb-4'></div>
-              <div className='h-9 w-full bg-zinc-200 rounded'></div>
+            <div key={i} className='glass-card p-6 animate-pulse border-white/5'>
+              <div className='h-8 w-40 bg-white/5 rounded-lg mb-4'></div>
+              <div className='h-4 w-24 bg-white/5 rounded mb-2'></div>
+              <div className='h-20 w-full bg-white/5 rounded-xl mt-6'></div>
             </div>
           ))}
         </div>
-      )}
-
-      {!isLoading && appointments.length === 0 && (
-        <div className='mt-10 rounded-2xl border border-zinc-200 bg-white p-8 text-center'>
-          <div className='flex justify-center'>
-            <img src={assets.appointment_img} alt='' className='w-44 h-28 object-contain opacity-90' />
-          </div>
-          <h3 className='mt-4 text-lg font-semibold text-zinc-800'>No appointments yet</h3>
-          <p className='mt-1 text-sm text-zinc-500'>When you book an appointment, it will appear here.</p>
-          <div className='mt-4'>
-            <a href='/' className='inline-block px-5 py-2 rounded-full bg-primary text-white hover:opacity-90 transition'>Book your first appointment</a>
+      ) : appointments.length === 0 ? (
+        <div className='glass-card border-white/5 py-20 px-8 text-center relative overflow-hidden group/empty'>
+          <div className='absolute inset-0 bg-gradient-to-br from-neon-cyan/5 to-neon-purple/5 opacity-0 group-hover/empty:opacity-100 transition-opacity duration-1000'></div>
+          <div className='relative z-10'>
+            <div className='w-24 h-24 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-8 border border-white/10 group-hover/empty:scale-110 transition-transform'>
+              <svg className="w-12 h-12 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+            </div>
+            <h3 className='text-xl font-black text-white uppercase tracking-widest mb-2'>No Active Synchs</h3>
+            <p className='text-gray-500 font-medium mb-8'>Initialize a new medical bridge to view schedule data.</p>
+            <a href='/' className='neon-button px-8 py-3 text-sm'>Initiate Protocol</a>
           </div>
         </div>
-      )}
-
-      {!isLoading && appointments.length > 0 && (
-        <div className='mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3'>
+      ) : (
+        <div className='grid gap-6 sm:grid-cols-2 lg:grid-cols-3'>
           {appointments.map(ap => {
             const dateObj = new Date(ap.date)
             const dateStr = dateObj.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })
-            const badgeClass = statusStyleByValue[ap.status?.toLowerCase?.()] || 'bg-zinc-50 text-zinc-700 border-zinc-200'
             const isCancelled = ap.status?.toLowerCase?.() === 'cancelled'
+            const isCompleted = ap.status?.toLowerCase?.() === 'completed'
             const docMeta = doctors?.find?.(d => d._id === ap.doctorId)
-            const doctorName = docMeta?.name || ap.doctorName || 'Doctor'
-            const doctorSpeciality = docMeta?.speciality || ap.speciality || ''
+
             return (
-              <div key={ap._id} className='rounded-2xl border border-zinc-200 bg-white p-5 hover:shadow-md transition-shadow'>
-                <div className='flex items-start justify-between gap-3'>
+              <div key={ap._id} className={`glass-card p-6 border-white/5 hover:border-white/20 transition-all group/card ${isCancelled ? 'opacity-60 grayscale' : ''}`}>
+                <div className='flex items-start justify-between gap-4 mb-6'>
                   <div>
-                    <p className='text-base font-semibold text-zinc-800'>{dateStr}</p>
-                    <p className='text-sm text-zinc-500 mt-0.5'>{ap.slot}</p>
+                    <h4 className='text-lg font-black text-white uppercase tracking-tighter'>{dateStr}</h4>
+                    <p className='text-neon-cyan text-xs font-bold tracking-widest uppercase mt-1'>{ap.slot}</p>
                   </div>
-                  <span className={`px-3 py-1 rounded-full text-xs border capitalize ${badgeClass}`}>{ap.status}</span>
+                  <span className={`px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest border ${isCancelled ? 'border-red-500/30 text-red-500 bg-red-500/5' :
+                      isCompleted ? 'border-green-500/30 text-green-500 bg-green-500/5' :
+                        'border-neon-cyan/30 text-neon-cyan bg-neon-cyan/5'
+                    }`}>
+                    {ap.status}
+                  </span>
                 </div>
-                <div className='mt-4 flex items-center gap-3'>
-                  <img src={docMeta?.image || assets.profile_pic} alt='' className='w-12 h-12 rounded-full object-cover border border-zinc-200' />
-                  <div className='text-sm text-zinc-600'>
-                    <p className='text-zinc-800 font-medium'>{doctorName}</p>
-                    <p className='text-xs capitalize'>{doctorSpeciality}</p>
-                    <p className='text-xs'>Ref: {ap._id?.slice?.(-6) || '—'} {ap.fees ? `• ${currencySymbol}${ap.fees}` : ''}</p>
+
+                <div className='glass-card border-none bg-white/5 p-4 flex items-center gap-4 mb-6 group-hover/card:bg-white/10 transition-colors'>
+                  <div className='relative'>
+                    <div className='absolute -inset-1 bg-gradient-to-r from-neon-cyan to-neon-purple rounded-xl blur opacity-30 group-hover/card:opacity-70 transition duration-500'></div>
+                    <img src={docMeta?.image || assets.profile_pic} alt='' className='w-14 h-14 rounded-xl object-cover relative z-10 border border-white/10' />
+                  </div>
+                  <div>
+                    <p className='text-white font-black text-sm uppercase tracking-tighter'>{docMeta?.name || ap.doctorName}</p>
+                    <p className='text-gray-500 text-[10px] font-bold uppercase tracking-widest mt-0.5'>{docMeta?.speciality || ap.speciality}</p>
+                    <p className='text-neon-purple text-[10px] font-bold mt-1'>ID: {ap._id?.slice?.(-8).toUpperCase()}</p>
                   </div>
                 </div>
-                <div className='mt-5 flex gap-3'>
-                  <button
-                    onClick={()=> setConfirmAppt(ap)}
-                    disabled={isCancelled}
-                    className={`flex-1 text-sm text-center px-4 py-2 rounded-full border transition ${isCancelled ? 'text-zinc-400 border-zinc-200 cursor-not-allowed' : 'text-rose-600 border-rose-200 hover:bg-rose-600 hover:text-white'}`}
-                  >
-                    Cancel appointment
-                  </button>
-                  <button
-                    onClick={()=> setPayModalAppt(ap)}
-                    disabled={isCancelled || payingId === ap._id}
-                    className={`px-4 py-2 rounded-full text-sm border transition ${isCancelled ? 'text-zinc-400 border-zinc-200 cursor-not-allowed' : 'text-emerald-700 border-emerald-200 hover:bg-emerald-600 hover:text-white'}`}
-                  >
-                    {payingId === ap._id ? 'Redirecting…' : 'Pay via online'}
-                  </button>
-                
+
+                <div className='flex gap-3'>
+                  {!isCancelled && !isCompleted ? (
+                    <>
+                      <button
+                        onClick={() => setConfirmAppt(ap)}
+                        className='flex-1 py-2.5 rounded-xl border border-red-500/30 text-red-500 text-[10px] font-black uppercase tracking-widest hover:bg-red-500/10 transition-all'
+                      >
+                        Abort
+                      </button>
+                      <button
+                        onClick={() => setPayModalAppt(ap)}
+                        disabled={payingId === ap._id}
+                        className='flex-1 py-2.5 rounded-xl bg-neon-cyan text-black text-[10px] font-black uppercase tracking-widest hover:shadow-neon-glow transition-all disabled:opacity-50'
+                      >
+                        {payingId === ap._id ? 'SYNCING...' : 'FINALIZE PAY'}
+                      </button>
+                    </>
+                  ) : (
+                    <button
+                      onClick={() => printSingleReceipt(ap)}
+                      className='w-full py-2.5 rounded-xl border border-white/10 text-gray-400 text-[10px] font-black uppercase tracking-widest hover:text-white hover:bg-white/5 transition-all flex items-center justify-center gap-2'
+                    >
+                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2-2v4" /></svg>
+                      Acquire Receipt
+                    </button>
+                  )}
                 </div>
               </div>
             )
@@ -335,77 +360,91 @@ const MyAppointments = () => {
         </div>
       )}
 
+      {/* Confirmation Modal */}
       {confirmAppt && (
-        <div className='fixed inset-0 z-50 flex items-center justify-center'>
-          <div className='absolute inset-0 bg-black/30'></div>
-          <div className='relative z-10 w-[92%] max-w-md rounded-2xl border border-zinc-200 bg-white p-6 shadow-xl'>
-            <div className='flex items-start gap-3'>
-              <div className='w-10 h-10 rounded-full bg-rose-50 flex items-center justify-center border border-rose-100'>
-                <span className='text-rose-600 text-lg'>!</span>
+        <div className='fixed inset-0 z-[100] flex items-center justify-center p-4'>
+          <div className='absolute inset-0 bg-cyber-black/80 backdrop-blur-md transition-opacity'></div>
+          <div className='relative z-10 w-full max-w-md glass-card p-8 border-red-500/30 overflow-hidden group/modal'>
+            <div className='absolute -top-24 -left-24 w-48 h-48 bg-red-500/10 rounded-full blur-3xl'></div>
+            <div className='text-center relative z-10'>
+              <div className='w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-6 border border-red-500/20'>
+                <svg className="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
               </div>
-              <div className='flex-1'>
-                <h3 className='text-lg font-semibold text-zinc-900'>Cancel this appointment?</h3>
-                <p className='text-sm text-zinc-600 mt-1'>
-                  {`You are about to cancel the appointment on ${new Date(confirmAppt.date).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })} at ${confirmAppt.slot}.`}
-                </p>
+              <h3 className='text-2xl font-black text-white uppercase tracking-tighter mb-2'>Abort Connection?</h3>
+              <p className='text-gray-500 text-xs font-bold uppercase tracking-widest leading-relaxed'>
+                Requesting termination of medical link for {new Date(confirmAppt.date).toLocaleDateString()} at {confirmAppt.slot}.
+              </p>
+
+              <div className='flex gap-4 mt-10'>
+                <button
+                  onClick={() => setConfirmAppt(null)}
+                  className='flex-1 py-3 rounded-xl border border-white/10 text-white text-[10px] font-black uppercase tracking-widest hover:bg-white/5 transition-all'
+                >
+                  Maintain
+                </button>
+                <button
+                  onClick={() => cancelAppointment(confirmAppt._id)}
+                  disabled={isCancelling}
+                  className='flex-1 py-3 rounded-xl bg-red-600 text-white text-[10px] font-black uppercase tracking-widest hover:shadow-[0_0_20px_rgba(220,38,38,0.4)] transition-all disabled:opacity-50'
+                >
+                  {isCancelling ? 'SYNC_KILL...' : 'CONFIRM_ABORT'}
+                </button>
               </div>
-            </div>
-            <div className='mt-5 flex gap-3'>
-              <button
-                onClick={()=> setConfirmAppt(null)}
-                className='flex-1 px-4 py-2 rounded-full border border-zinc-200 text-zinc-700 hover:bg-zinc-50 text-sm'
-              >
-                Keep appointment
-              </button>
-              <button
-                onClick={()=> cancelAppointment(confirmAppt._id)}
-                disabled={isCancelling}
-                className={`flex-1 px-4 py-2 rounded-full text-white text-sm ${isCancelling ? 'bg-rose-400 cursor-wait' : 'bg-rose-600 hover:bg-rose-700'}`}
-              >
-                {isCancelling ? 'Cancelling…' : 'Cancel appointment'}
-              </button>
             </div>
           </div>
         </div>
       )}
 
-      {payModalAppt && (()=>{
+      {/* Payment Modal */}
+      {payModalAppt && (() => {
         const ap = payModalAppt
         const docMeta = doctors?.find?.(d => d._id === ap.doctorId)
-        const doctorName = docMeta?.name || ap.doctorName || 'Doctor'
-        const doctorSpeciality = docMeta?.speciality || ap.speciality || ''
         const amountNum = typeof ap.fees === 'number' ? ap.fees : 1000
         return (
-          <div className='fixed inset-0 z-50 flex items-center justify-center'>
-            <div className='absolute inset-0 bg-black/40 backdrop-blur-[1px]'></div>
-            <div className='relative z-10 w-[92%] max-w-lg rounded-2xl border border-zinc-200 bg-white p-6 shadow-2xl'>
-              <div className='flex items-center gap-4'>
-                <div className='w-12 h-12 rounded-xl bg-indigo-600 flex items-center justify-center text-white font-semibold'>
-                  $ 
+          <div className='fixed inset-0 z-[100] flex items-center justify-center p-4'>
+            <div className='absolute inset-0 bg-cyber-black/80 backdrop-blur-md transition-opacity'></div>
+            <div className='relative z-10 w-full max-w-lg glass-card p-10 border-neon-cyan/30 overflow-hidden'>
+              <div className='absolute -top-24 -right-24 w-64 h-64 bg-neon-cyan/10 rounded-full blur-3xl'></div>
+
+              <div className='flex items-center gap-6 mb-10 relative z-10'>
+                <div className='w-16 h-16 bg-neon-cyan/20 rounded-2xl flex items-center justify-center text-neon-cyan border border-neon-cyan/30 shadow-neon-glow/20'>
+                  <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
                 </div>
-                <div className='flex-1'>
-                  <h3 className='text-lg font-semibold text-zinc-900'>Confirm payment</h3>
-                  <p className='text-xs text-zinc-600'>Secure checkout powered by PayHere Sandbox</p>
+                <div>
+                  <h3 className='text-2xl font-black text-white uppercase tracking-tighter'>Credit Authorization</h3>
+                  <p className='text-gray-500 text-[10px] font-black uppercase tracking-widest mt-1'>Pulse Checkout • Verified Nexus</p>
                 </div>
               </div>
-              <div className='mt-5 rounded-xl border border-zinc-200 p-4 bg-zinc-50'>
-                <div className='flex items-center gap-3'>
-                  <img src={docMeta?.image || assets.profile_pic} alt='' className='w-10 h-10 rounded-full object-cover border border-zinc-200' />
-                  <div className='text-sm'>
-                    <p className='text-zinc-800 font-medium'>{doctorName}</p>
-                    <p className='text-xs text-zinc-600 capitalize'>{doctorSpeciality}</p>
+
+              <div className='glass-card bg-cyber-dark/50 border-white/5 p-6 mb-8 relative z-10'>
+                <div className='flex items-center gap-4 border-b border-white/5 pb-4 mb-4'>
+                  <img src={docMeta?.image || assets.profile_pic} alt='' className='w-12 h-12 rounded-xl border border-white/10' />
+                  <div>
+                    <p className='text-white font-black text-sm uppercase tracking-tighter'>{docMeta?.name || ap.doctorName}</p>
+                    <p className='text-neon-cyan text-[10px] font-black uppercase tracking-widest'>{docMeta?.speciality || ap.speciality}</p>
                   </div>
                 </div>
-                <div className='mt-4 grid grid-cols-2 gap-y-2 text-sm'>
-                  <span className='text-zinc-600'>Appointment</span>
-                  <span className='text-zinc-800 text-right'>{new Date(ap.date).toLocaleDateString(undefined,{month:'short',day:'numeric'})}, {ap.slot}</span>
-                  <span className='text-zinc-600'>Amount</span>
-                  <span className='text-zinc-900 font-semibold text-right'>${amountNum.toFixed(2)} USD</span>
+                <div className='space-y-3 text-[10px] font-black uppercase tracking-widest'>
+                  <div className='flex justify-between items-center text-gray-500'>
+                    <span>Time Node</span>
+                    <span className='text-gray-300'>{new Date(ap.date).toLocaleDateString()}, {ap.slot}</span>
+                  </div>
+                  <div className='flex justify-between items-center text-white pt-2 border-t border-white/5'>
+                    <span>Total Authorization</span>
+                    <span className='text-neon-purple text-lg tracking-tighter'>${amountNum.toFixed(2)} USD</span>
+                  </div>
                 </div>
               </div>
-              <div className='mt-5 flex gap-3'>
-                <button onClick={()=> setPayModalAppt(null)} className='flex-1 px-4 py-2 rounded-full border border-zinc-200 text-zinc-700 hover:bg-zinc-50 text-sm'>Close</button>
-                <button onClick={()=> handlePayOnline(ap)} disabled={payingId===ap._id} className={`flex-1 px-4 py-2 rounded-full text-white text-sm ${payingId===ap._id ? 'bg-emerald-400 cursor-wait' : 'bg-emerald-600 hover:bg-emerald-700'}`}>{payingId===ap._id?'Redirecting…':'Pay $'+amountNum.toFixed(2)}</button>
+
+              <div className='flex gap-4 relative z-10'>
+                <button onClick={() => setPayModalAppt(null)} className='flex-1 py-4 rounded-xl border border-white/10 text-white text-[10px] font-black uppercase tracking-widest hover:bg-white/5 transition-all'>Decline</button>
+                <button
+                  onClick={() => handlePayOnline(ap)}
+                  disabled={payingId === ap._id}
+                  className='flex-1 py-4 rounded-xl bg-neon-cyan text-black text-[10px] font-black uppercase tracking-widest hover:shadow-neon-glow transition-all disabled:opacity-50'
+                >
+                  {payingId === ap._id ? 'SYNCING...' : 'AUTHORIZE_TRANSFER'}
+                </button>
               </div>
             </div>
           </div>
